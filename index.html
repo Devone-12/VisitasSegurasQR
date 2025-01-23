@@ -6,28 +6,109 @@
     <title>Generador de Código QR para Visitas</title>
     
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            margin-bottom: 5px;
+            text-align: left;
+            display: block;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #qrCode {
+            margin-top: 30px;
+        }
+
+        #downloadBtn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+        }
+
+        #downloadBtn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Generador de Código QR para Visitas</h1>
-    
-    <form id="qrForm">
-        <label for="direccion">Dirección de la Casa:</label>
-        <input type="text" id="direccion" required><br><br>
-        
-        <label for="propietario">Nombre del Propietario:</label>
-        <input type="text" id="propietario" required><br><br>
-        
-        <label for="visitante">Nombre del Visitante:</label>
-        <input type="text" id="visitante" required><br><br>
-        
-        <label for="fechaVencimiento">Fecha de Vencimiento:</label>
-        <input type="date" id="fechaVencimiento" required><br><br>
+    <div class="container">
+        <h1>Generador de Código QR para Visitas</h1>
+        <form id="qrForm">
+            <label for="direccion">Dirección de la Casa:</label>
+            <input type="text" id="direccion" required placeholder="Ejemplo: Calle Falsa 123"><br>
+            
+            <label for="propietario">Nombre del Propietario:</label>
+            <input type="text" id="propietario" required placeholder="Ejemplo: Juan Pérez"><br>
+            
+            <label for="visitante">Nombre del Visitante:</label>
+            <input type="text" id="visitante" required placeholder="Ejemplo: María López"><br>
+            
+            <label for="fechaVencimiento">Fecha de Vencimiento:</label>
+            <input type="date" id="fechaVencimiento" required><br>
 
-        <button type="button" onclick="generarQR()">Generar QR</button>
-    </form>
+            <button type="button" onclick="generarQR()">Generar QR</button>
+        </form>
 
-    <div id="qrCode" style="margin-top: 20px;"></div>
-    <button id="downloadBtn" style="display:none" onclick="descargarQR()">Descargar QR</button>
+        <div id="qrCode"></div>
+        <button id="downloadBtn" onclick="descargarQR()">Descargar QR como imagen</button>
+    </div>
 
     <script>
         let qrCodeInstance;
@@ -38,19 +119,19 @@
             var visitante = document.getElementById("visitante").value;
             var fechaVencimiento = document.getElementById("fechaVencimiento").value;
 
-            // Crear la URL dinámica para la página de visita
-            var baseUrl = "https://tu-sitio.com/visita.html";
+            // Crear la URL dinámica para la página de visita (puedes cambiarla si ya no necesitas)
+            var baseUrl = "https://mi-sitio.com/visita.html"; // URL de tu sitio
             var queryString = `?direccion=${encodeURIComponent(direccion)}&propietario=${encodeURIComponent(propietario)}&visitante=${encodeURIComponent(visitante)}&fecha=${encodeURIComponent(fechaVencimiento)}`;
             var url = baseUrl + queryString;
 
             // Eliminar cualquier código QR previo
             document.getElementById("qrCode").innerHTML = "";
 
-            // Generar el nuevo código QR
+            // Generar el código QR con la URL
             qrCodeInstance = new QRCode(document.getElementById("qrCode"), {
                 text: url,
-                width: 128,
-                height: 128
+                width: 200,
+                height: 200
             });
 
             // Mostrar el botón de descarga
@@ -62,11 +143,34 @@
             var canvas = document.querySelector("#qrCode canvas");
             var image = canvas.toDataURL("image/png");
 
-            // Crear un enlace para descargar la imagen
-            var link = document.createElement("a");
-            link.href = image;
-            link.download = "codigo_qr_visita.png";
-            link.click();
+            // Crear un lienzo para dibujar el QR y la información
+            var finalCanvas = document.createElement("canvas");
+            var ctx = finalCanvas.getContext("2d");
+
+            // Establecer las dimensiones del nuevo lienzo
+            finalCanvas.width = 250;
+            finalCanvas.height = 400; // Más espacio para la información
+
+            // Dibujar el QR en el nuevo lienzo
+            var qrImage = new Image();
+            qrImage.src = image;
+            qrImage.onload = function() {
+                ctx.drawImage(qrImage, 25, 25, 200, 200);
+
+                // Dibujar la información debajo del QR
+                ctx.font = "16px Arial";
+                ctx.fillStyle = "#333";
+                ctx.fillText(`Dirección: ${document.getElementById("direccion").value}`, 25, 240);
+                ctx.fillText(`Propietario: ${document.getElementById("propietario").value}`, 25, 270);
+                ctx.fillText(`Visitante: ${document.getElementById("visitante").value}`, 25, 300);
+                ctx.fillText(`Fecha: ${document.getElementById("fechaVencimiento").value}`, 25, 330);
+
+                // Crear un enlace para descargar la imagen
+                var link = document.createElement("a");
+                link.href = finalCanvas.toDataURL("image/png");
+                link.download = "codigo_qr_con_info.png";
+                link.click();
+            };
         }
     </script>
 </body>
