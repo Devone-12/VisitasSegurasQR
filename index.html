@@ -11,7 +11,7 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            background-color: #f1f5f9;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -19,26 +19,26 @@
         }
 
         .container {
-            background-color: white;
+            background-color: #fff;
             padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             text-align: center;
         }
 
         h1 {
-            color: #333;
-            margin-bottom: 20px;
+            color: #2c3e50;
+            margin-bottom: 25px;
         }
 
         label {
             font-size: 16px;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             text-align: left;
             display: block;
-            color: #555;
+            color: #34495e;
         }
 
         input {
@@ -46,24 +46,25 @@
             padding: 12px;
             margin: 8px 0 20px 0;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 16px;
             box-sizing: border-box;
+            background-color: #f9f9f9;
         }
 
         button {
-            background-color: #4CAF50;
+            background-color: #3498db;
             color: white;
             padding: 12px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #2980b9;
         }
 
         #qrCode {
@@ -73,17 +74,30 @@
         #downloadQRBtn, #downloadTicketBtn {
             margin-top: 20px;
             padding: 10px 20px;
-            background-color: #007bff;
+            background-color: #2ecc71;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
             display: none;
         }
 
         #downloadQRBtn:hover, #downloadTicketBtn:hover {
-            background-color: #0056b3;
+            background-color: #27ae60;
+        }
+
+        /* Estilo para la marca de agua en el boleto de pase */
+        .watermark {
+            position: absolute;
+            color: rgba(0, 0, 0, 0.1);
+            font-size: 60px;
+            font-weight: bold;
+            transform: rotate(-30deg);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
         }
     </style>
 </head>
@@ -166,6 +180,16 @@
             // Establecer las dimensiones del nuevo lienzo
             finalCanvas.width = 400;
             finalCanvas.height = 300; // Tamaño adecuado para el boleto
+
+            // Dibujar la marca de agua en el boleto
+            var watermarkText = "UNICO Y AUTENTICO";
+            ctx.globalAlpha = 0.1;
+            ctx.font = "60px Arial";
+            ctx.fillStyle = "#3498db";
+            ctx.fillText(watermarkText, finalCanvas.width / 2 - 180, finalCanvas.height / 2);
+
+            // Restablecer la opacidad para el resto de la información
+            ctx.globalAlpha = 1;
 
             // Dibujar la información en el boleto
             ctx.font = "18px Arial";
