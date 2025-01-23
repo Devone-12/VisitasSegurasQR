@@ -38,21 +38,17 @@
             var visitante = document.getElementById("visitante").value;
             var fechaVencimiento = document.getElementById("fechaVencimiento").value;
 
-            // Formato de la información a incluir en el QR
-            var data = `
-                Casa: ${direccion}
-                Propietario: ${propietario}
-                Visitante: ${visitante}
-                Estatus: Invitado
-                Fecha de Vencimiento: ${fechaVencimiento}
-            `;
+            // Crear la URL dinámica para la página de visita
+            var baseUrl = "https://tu-sitio.com/visita.html";
+            var queryString = `?direccion=${encodeURIComponent(direccion)}&propietario=${encodeURIComponent(propietario)}&visitante=${encodeURIComponent(visitante)}&fecha=${encodeURIComponent(fechaVencimiento)}`;
+            var url = baseUrl + queryString;
 
             // Eliminar cualquier código QR previo
             document.getElementById("qrCode").innerHTML = "";
 
             // Generar el nuevo código QR
             qrCodeInstance = new QRCode(document.getElementById("qrCode"), {
-                text: data,
+                text: url,
                 width: 128,
                 height: 128
             });
