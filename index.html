@@ -70,7 +70,7 @@
             margin-top: 30px;
         }
 
-        #downloadBtn {
+        #downloadQRBtn, #downloadTicketBtn {
             margin-top: 20px;
             padding: 10px 20px;
             background-color: #007bff;
@@ -82,7 +82,7 @@
             display: none;
         }
 
-        #downloadBtn:hover {
+        #downloadQRBtn:hover, #downloadTicketBtn:hover {
             background-color: #0056b3;
         }
     </style>
@@ -107,7 +107,8 @@
         </form>
 
         <div id="qrCode"></div>
-        <button id="downloadBtn" onclick="descargarQR()">Descargar QR como imagen</button>
+        <button id="downloadQRBtn" onclick="descargarQR()">Descargar QR como imagen</button>
+        <button id="downloadTicketBtn" onclick="descargarBoleto()">Descargar Boleto de Pase</button>
     </div>
 
     <script>
@@ -134,8 +135,9 @@
                 height: 200
             });
 
-            // Mostrar el botón de descarga
-            document.getElementById("downloadBtn").style.display = "block";
+            // Mostrar los botones de descarga
+            document.getElementById("downloadQRBtn").style.display = "block";
+            document.getElementById("downloadTicketBtn").style.display = "block";
         }
 
         // Función para descargar el QR como imagen
@@ -143,34 +145,43 @@
             var canvas = document.querySelector("#qrCode canvas");
             var image = canvas.toDataURL("image/png");
 
-            // Crear un lienzo para dibujar el QR y la información
+            // Crear un enlace para descargar la imagen del QR
+            var link = document.createElement("a");
+            link.href = image;
+            link.download = "codigo_qr.png";
+            link.click();
+        }
+
+        // Función para descargar el boleto de pase con la información
+        function descargarBoleto() {
+            var direccion = document.getElementById("direccion").value;
+            var propietario = document.getElementById("propietario").value;
+            var visitante = document.getElementById("visitante").value;
+            var fechaVencimiento = document.getElementById("fechaVencimiento").value;
+
+            // Crear un lienzo para dibujar el boleto de pase
             var finalCanvas = document.createElement("canvas");
             var ctx = finalCanvas.getContext("2d");
 
             // Establecer las dimensiones del nuevo lienzo
-            finalCanvas.width = 250;
-            finalCanvas.height = 400; // Más espacio para la información
+            finalCanvas.width = 400;
+            finalCanvas.height = 300; // Tamaño adecuado para el boleto
 
-            // Dibujar el QR en el nuevo lienzo
-            var qrImage = new Image();
-            qrImage.src = image;
-            qrImage.onload = function() {
-                ctx.drawImage(qrImage, 25, 25, 200, 200);
+            // Dibujar la información en el boleto
+            ctx.font = "18px Arial";
+            ctx.fillStyle = "#333";
+            ctx.fillText("Boleto de Pase - Visita", 20, 30);
+            ctx.font = "16px Arial";
+            ctx.fillText(`Dirección: ${direccion}`, 20, 70);
+            ctx.fillText(`Propietario: ${propietario}`, 20, 100);
+            ctx.fillText(`Visitante: ${visitante}`, 20, 130);
+            ctx.fillText(`Fecha de Vencimiento: ${fechaVencimiento}`, 20, 160);
 
-                // Dibujar la información debajo del QR
-                ctx.font = "16px Arial";
-                ctx.fillStyle = "#333";
-                ctx.fillText(`Dirección: ${document.getElementById("direccion").value}`, 25, 240);
-                ctx.fillText(`Propietario: ${document.getElementById("propietario").value}`, 25, 270);
-                ctx.fillText(`Visitante: ${document.getElementById("visitante").value}`, 25, 300);
-                ctx.fillText(`Fecha: ${document.getElementById("fechaVencimiento").value}`, 25, 330);
-
-                // Crear un enlace para descargar la imagen
-                var link = document.createElement("a");
-                link.href = finalCanvas.toDataURL("image/png");
-                link.download = "codigo_qr_con_info.png";
-                link.click();
-            };
+            // Crear un enlace para descargar el boleto de pase
+            var link = document.createElement("a");
+            link.href = finalCanvas.toDataURL("image/png");
+            link.download = "boleto_de_pase.png";
+            link.click();
         }
     </script>
 </body>
