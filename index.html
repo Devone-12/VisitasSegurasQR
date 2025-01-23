@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Código QR para Visitas</title>
+    
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+</head>
+<body>
+    <h1>Generador de Código QR para Visitas</h1>
+    
+    <form id="qrForm">
+        <label for="direccion">Dirección de la Casa:</label>
+        <input type="text" id="direccion" required><br><br>
+        
+        <label for="propietario">Nombre del Propietario:</label>
+        <input type="text" id="propietario" required><br><br>
+        
+        <label for="visitante">Nombre del Visitante:</label>
+        <input type="text" id="visitante" required><br><br>
+        
+        <label for="fechaVencimiento">Fecha de Vencimiento:</label>
+        <input type="date" id="fechaVencimiento" required><br><br>
+
+        <button type="button" onclick="generarQR()">Generar QR</button>
+    </form>
+
+    <div id="qrCode" style="margin-top: 20px;"></div>
+    <button id="downloadBtn" style="display:none" onclick="descargarQR()">Descargar QR</button>
+
+    <script>
+        let qrCodeInstance;
+
+        function generarQR() {
+            var direccion = document.getElementById("direccion").value;
+            var propietario = document.getElementById("propietario").value;
+            var visitante = document.getElementById("visitante").value;
+            var fechaVencimiento = document.getElementById("fechaVencimiento").value;
+
+            // Formato de la información a incluir en el QR
+            var data = `
+                Casa: ${direccion}
+                Propietario: ${propietario}
+                Visitante: ${visitante}
+                Estatus: Invitado
+                Fecha de Vencimiento: ${fechaVencimiento}
+            `;
+
+            // Eliminar cualquier código QR previo
+            document.getElementById("qrCode").innerHTML = "";
+
+            // Generar el nuevo código QR
+            qrCodeInstance = new QRCode(document.getElementById("qrCode"), {
+                text: data,
+                width: 128,
+                height: 128
+            });
+
+            // Mostrar el botón de descarga
+            document.getElementById("downloadBtn").style.display = "block";
+        }
+
+        // Función para descargar el QR como imagen
+        function descargarQR() {
+            var canvas = document.querySelector("#qrCode canvas");
+            var image = canvas.toDataURL("image/png");
+
+            // Crear un enlace para descargar la imagen
+            var link = document.createElement("a");
+            link.href = image;
+            link.download = "codigo_qr_visita.png";
+            link.click();
+        }
+    </script>
+</body>
+</html>
